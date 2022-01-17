@@ -4,13 +4,14 @@ import (
 	"fmt"
 	"log"
 	"net/http"
+
+	"comment-generator/router"
 )
 
 func main() {
-	fs := http.FileServer(http.Dir("../client/build"))
-	http.Handle("/", fs)
+	r := router.Router()
 	
 	fmt.Println("Starting server on port 8080...")
 
-	log.Fatal(http.ListenAndServe(":8080", fs))
+	log.Fatal(http.ListenAndServe(":8080", r))
 }
