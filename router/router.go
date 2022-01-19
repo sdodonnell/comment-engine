@@ -1,10 +1,12 @@
 package router
 
 import (
-	"fmt"
+	// "fmt"
 	"net/http"
-	"strconv"
-	"strings"
+	// "strconv"
+	// "strings"
+	
+	"github.com/gorilla/mux"
 )
 
 /**
@@ -14,40 +16,22 @@ import (
  * DELETE /api/comment/<id> : delete a comment by ID
  */
 
-func Router() *http.ServeMux {
-	mux := http.NewServeMux()
-	mux.HandleFunc("/api/comment", apiHandler)
-	mux.Handle("/", http.FileServer(http.Dir("./client/build")))
+func Router() *mux.Router {
+	router := mux.NewRouter()
 
-	return mux
+	router.HandleFunc("/api/comment", getCommentsHandler).Methods("GET")
+	router.HandleFunc("/api/comment/{id}", getCommentHandler).Methods("GET")
+	router.HandleFunc("/api/comment", saveCommentHandler).Methods("POST")
+	router.HandleFunc("/api/comment/{id}", deleteCommentHandler).Methods("DELETE")
+
+	return router
 }
 
-func apiHandler(w http.ResponseWriter, req *http.Request) {
-	if req.URL.Path == "/comment/" {
-		if req.Method == http.MethodPost {
-			// post comment
-		} else if req.Method == http.MethodGet {
-			// get all tasks
-		} else {
-			http.Error(w, fmt.Sprintf("expect method GET, DELETE or POST at /task/, got %v", req.Method), http.StatusMethodNotAllowed)
-		}
-	} else {
-		path := strings.Trim(req.URL.Path, "/")
-		pathParts := strings.Split(path, "/")
+func getCommentsHandler(w http.ResponseWriter, req *http.Request) {}
 
-		id, err := strconv.Atoi(pathParts[1])
+func getCommentHandler(w http.ResponseWriter, req *http.Request) {}
 
-		if err != nil {
-			http.Error(w, err.Error(), http.StatusBadRequest)
-			return
-		}
-		
-		if req.Method == http.MethodGet {
-			// get comment
-		} else if req.Method == http.MethodDelete {
-			// delete comment
-		} else {
-			http.Error(w, fmt.Sprintf("expect method GET or DELETE at /task/<id>, got %v", req.Method), http.StatusMethodNotAllowed)
-		}
-	}
-}
+func saveCommentHandler(w http.ResponseWriter, req *http.Request) {}
+
+func deleteCommentHandler(w http.ResponseWriter, req *http.Request) {}
+
