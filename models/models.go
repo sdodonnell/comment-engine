@@ -9,16 +9,16 @@ const (
 )
 
 type CommentSection struct {
-	FullName string
-	ShortName string
-	Rank CommentRank
-	CustomComment string
+	FullName string      `json:"full_name"`
+	ShortName string     `json:"short_name"`
+	Rank CommentRank     `json:"rank"`
+	CustomComment string `json:"comment"`
 }
 
 type Comment struct {
-	StudentName string
-	Course string
-	TermDescription string
-	Sections []CommentSection
-	FutureComment string
+	StudentName string 	      `json:"name"`
+	Course string             `json:"course"`
+	TermDescription string    `json:"term_description"`
+	Sections []CommentSection `json:"skill_sets"`
+	FutureComment string      `json:"future_comment"`
 }
