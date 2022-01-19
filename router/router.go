@@ -1,11 +1,13 @@
 package router
 
 import (
-	// "fmt"
+	"encoding/json"
+	"fmt"
 	"net/http"
-	// "strconv"
-	// "strings"
-	
+
+	"comment-generator/controller"
+	"comment-generator/models"
+
 	"github.com/gorilla/mux"
 )
 
@@ -27,11 +29,56 @@ func Router() *mux.Router {
 	return router
 }
 
-func getCommentsHandler(w http.ResponseWriter, req *http.Request) {}
+func getCommentsHandler(w http.ResponseWriter, req *http.Request) {
+	comments, err := controller.GetAllComments()
 
-func getCommentHandler(w http.ResponseWriter, req *http.Request) {}
+	if err != nil {
+		fmt.Println("Something went wrong trying to fetch comments.")
+		return
+	}
 
-func saveCommentHandler(w http.ResponseWriter, req *http.Request) {}
+	// maybe some headers?
+	
+	json.NewEncoder(w).Encode(comments)
+}
 
-func deleteCommentHandler(w http.ResponseWriter, req *http.Request) {}
+func getCommentHandler(w http.ResponseWriter, req *http.Request) {
+	vars := mux.Vars(req)
+	comment, err := controller.GetComment(vars["id"])
+
+	if err != nil {
+		fmt.Println("Something went wrong trying to fetch this comment.")
+		return
+	}
+
+	// maybe some headers?
+	json.NewEncoder(w).Encode(comment)
+}
+
+func saveCommentHandler(w http.ResponseWriter, req *http.Request) {
+	var comment models.Comment
+	_ = json.NewDecoder(req.Body).Decode(&comment)
+	_, err := controller.CreateComment(&comment)
+
+	if err != nil {
+		fmt.Println("Something went wrong trying to save this comment.")
+		return
+	}
+
+	// maybe some headers?
+	json.NewEncoder(w).Encode(comment)
+}
+
+func deleteCommentHandler(w http.ResponseWriter, req *http.Request) {
+	vars := mux.Vars(req)
+	err := controller.DeleteComment(vars["id"])
+
+	if err != nil {
+		fmt.Println("Something went wrong trying to delete this comment.")
+		return
+	}
+
+	// maybe some headers?
+	json.NewEncoder(w).Encode(vars["id"])
+}
 

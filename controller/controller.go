@@ -8,6 +8,7 @@ import (
 	"time"
 
 	"go.mongodb.org/mongo-driver/bson"
+	"go.mongodb.org/mongo-driver/bson/primitive"
 	"go.mongodb.org/mongo-driver/mongo"
 	"go.mongodb.org/mongo-driver/mongo/options"
 )
@@ -37,20 +38,52 @@ func init() {
 }
 
 // CRUD operations
-func GetAllComments() ([]models.Comment, error) {
-	cursor, err := collection.Find(context.TODO(), bson.D{{}}, nil)
+func GetAllComments() ([]bson.M, error) {
+	cursor, err := collection.Find(context.TODO(), bson.D{{}})
+
+	if err != nil {
+		log.Fatal(err)
+	}
 
 	var results []bson.M
 	if err := cursor.All(context.TODO(), &results); err != nil {
 		log.Fatal(err)
 	}
 
-	fmt.Println(results)
-	return [], nil
+	return results, nil
 }
 
-func CreateComment(comment *models.Comment) int {}
+func CreateComment(comment *models.Comment) (interface{}, error) {
+	result, err := collection.InsertOne(context.TODO(), *comment)
 
-func GetComment(id int) (models.Comment, error) {}
+	if err != nil {
+		fmt.Println("There was an error saving a comment to the database.")
+	}
 
-func DeleteComment(id int) error {}
+	fmt.Printf("Document successfully inserted! ID: %v\n", result.InsertedID)
+
+	return result.InsertedID, err
+}
+
+func GetComment(id string) (models.Comment, error) {
+	var comment models.Comment
+	objectId, _ := primitive.ObjectIDFromHex(id)
+	err := collection.FindOne(context.TODO(), bson.D{{Key: "_id", Value: objectId}}).Decode(&comment)
+
+	if err != nil {
+		fmt.Printf("There was an error fetching this comment: %v\n", objectId)
+	}
+
+	return comment, err
+}
+
+func DeleteComment(id string) error {
+	objectId, _ := primitive.ObjectIDFromHex(id)
+	_, err := collection.DeleteOne(context.TODO(), bson.D{{Key: "_id", Value: objectId}})
+
+	if err != nil {
+		fmt.Printf("There was an error deleting this comment: %v\n", objectId)
+	}
+
+	return nil
+}
