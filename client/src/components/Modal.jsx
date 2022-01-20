@@ -1,16 +1,18 @@
 import React, { useState } from 'react';
 
 const Modal = ({ activeStudent, hideModal, skillSets, saveComment }) => {
+  const skillSetsObj = skillSets.reduce((array, value) => ({ ...array, [value.short_name]: 2 }), {});
+
   const [name, setName] = useState('');
-  const [performance, setPerformance] = useState({});
+  const [performance, setPerformance] = useState(skillSetsObj);
 
   const handleNameChange = e => {
     setName(e.target.value);
   };
   const handlePerformanceChange = (e, skillSet) => {
     setPerformance(perf => ({
-        ...perf,
-        [skillSet]: e.target.value
+      ...perf,
+      [skillSet]: Number(e.target.value)
     }));
   };
 

@@ -3,6 +3,7 @@ package router
 import (
 	"encoding/json"
 	"fmt"
+	"log"
 	"net/http"
 
 	"comment-generator/controller"
@@ -56,16 +57,19 @@ func getCommentHandler(w http.ResponseWriter, req *http.Request) {
 }
 
 func saveCommentHandler(w http.ResponseWriter, req *http.Request) {
+	w.Header().Set("Access-Control-Allow-Origin", "*")
+	w.Header().Set("Access-Control-Allow-Methods", "POST")
+	w.Header().Set("Access-Control-Allow-Headers", "Content-Type")
+
 	var comment models.Comment
 	_ = json.NewDecoder(req.Body).Decode(&comment)
 	_, err := controller.CreateComment(&comment)
 
 	if err != nil {
-		fmt.Println("Something went wrong trying to save this comment.")
+		log.Fatal(err)
 		return
 	}
 
-	// maybe some headers?
 	json.NewEncoder(w).Encode(comment)
 }
 
