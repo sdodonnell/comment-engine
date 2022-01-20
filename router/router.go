@@ -37,7 +37,7 @@ func getCommentsHandler(w http.ResponseWriter, req *http.Request) {
 		return
 	}
 
-	// maybe some headers?
+	w.Header().Add("Access-Control-Allow-Origin", "*")
 	
 	json.NewEncoder(w).Encode(comments)
 }
