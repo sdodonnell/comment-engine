@@ -20,12 +20,11 @@ type GPTResponse = {
 export async function POST(request: Request) {
     console.log(request.body);
     
-    const API_KEY = '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';
     const PROMPT = `Write summary of feedback for a high school history student named [name] in at least 8 sentences. Point out [pronoun] strengths, which include [strength1] and [strength2], and [pronoun] areas of improvement, which include [improvement1] and [improvement2]. Also point out the fact that [fact1].`
 
     const getGPTOutput = async (data: GPTData): Promise<GPTResponse | undefined> => {
         const configuration = new Configuration({
-            apiKey: API_KEY,
+            apiKey: process.env.OPENAI_API_KEY,
         });
 
         try {
