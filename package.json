@@ -1,0 +1,7 @@
+{
+  "type": "module",
+  "devDependencies": {
+    "inquirer": "^9.1.4",
+    "yargs": "^17.7.1"
+  }
+}
