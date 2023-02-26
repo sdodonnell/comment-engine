@@ -17,14 +17,48 @@ const run = async () => {
     const input = {
         someKey: 'someValue'
     }
-    
-    const output = await getGPTOutput(input);
-    
-    fs.writeFile('./comments.txt', output, err => {
-        if (err) {
-            console.error(err);
-        }
-    })
+
+    inquirer
+        .prompt([
+            {
+                type: 'input',
+                name: 'input',
+                message: 'Type something and test the output!'
+            },
+            {
+                type: 'list',
+                name: 'list',
+                message: 'Choose one of the following options and test the output!',
+                choices: [
+                    'A',
+                    'B',
+                    'C'
+                ]
+            },
+            {
+                type: 'confirm',
+                name: 'confirm',
+                message: 'Choose yes or no?'
+            }
+        ])
+        .then((answers) => {
+            return getGPTOutput(answers);
+        })
+        .then((output) => {
+            fs.writeFile('./comments.txt', output, err => {
+                if (err) {
+                    console.error(err);
+                }
+            })
+        })
+        .catch((error) => {
+            if (error.isTtyError) {
+                console.log('Something went wrong: TTY Error');
+            } else {
+                console.error('Something went wrong: ', err);
+            }
+        });
+
 }
 
 run();
